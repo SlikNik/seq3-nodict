@@ -51,33 +51,45 @@ class NoDict:
         """Accept a new key and value, and store it into the NoDict instance;
         no duplicate keys."""
         new_node = Node(key, value)
-        bucket_index = new_node.hash % self.num_buckets
-        for bucket in self.buckets[bucket_index]:
-            if key not in bucket:
-                bucket = [key, value]
-        return self.buckets
+        bucket = self.buckets[new_node.hash % self.num_buckets]
+        for keys in bucket:
+            if keys == new_node:
+                bucket.remove(keys)
+                break
+        bucket.append(new_node)
 
     def get(self, key):
         """Performs a key-lookup from given key.
         If the key is found return its associated value.
         If the key is not found, raise a KeyError exception."""
-        if key not in self.buckets:
-            # Raise AttributeError if attribute value not found.
-            raise KeyError(f'{key} not found')
-        # Return attribute value.
-        return self.buckets[key]
+        get_node = Node(key)
+        bucket = self.buckets[get_node.hash % self.num_buckets]
+        for keys in bucket:
+            if keys == get_node:
+                return keys.value
+        raise KeyError(f'{key} not found')
 
     def __getitem__(self, key):
-        """enable square-bracket reading behavior;
+        """Enable square-bracket reading behavior;
         behave more like a regular dictionary."""
-        return
+        value = self.get(key)
+        return value
 
     def __setitem__(self, key, value):
         """Setter method that enables square-bracket assignment behavior."""
-        return
+        self.add(key, value)
 
 
-nn1 = NoDict()
-print(nn1)
-index = nn1.add("Nikal", 7)
-print(nn1.buckets[index])
+my_dict = NoDict()
+my_dict['Kevin'] = 23
+my_dict['Nikal'] = 26
+my_dict['Nicolette'] = 21
+print(my_dict)
+kevin_age = my_dict['Kevin']
+nikal_age = my_dict['Nikal']
+nicolette_age = my_dict['Nicolette']
+print(kevin_age)
+print(nikal_age)
+print(nicolette_age)
+
+
